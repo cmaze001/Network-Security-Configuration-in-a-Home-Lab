@@ -1,0 +1,31 @@
+Capture Description:
+
+Capture Type: TCP traffic between two devices on the same local network.
+Protocol: HTTP (Port 80) and HTTPS (Port 443)
+Source IP: 192.168.1.10
+Destination IP: 192.168.1.20
+
+No.     Time           Source                Destination           Protocol Length Info
+   1  0.000000       192.168.1.10          192.168.1.20          TCP      74     80 → 443 [SYN] Seq=0 Win=65535 Len=0 MSS=1460
+   2  0.000254       192.168.1.20          192.168.1.10          TCP      74     443 → 80 [SYN, ACK] Seq=0 Ack=1 Win=65535 Len=0 MSS=1460
+   3  0.001056       192.168.1.10          192.168.1.20          TCP      66     80 → 443 [ACK] Seq=1 Ack=1 Win=65535 Len=0
+   4  0.003759       192.168.1.10          192.168.1.20          HTTP     338    GET /index.html HTTP/1.1
+   5  0.004453       192.168.1.20          192.168.1.10          HTTP     396    HTTP/1.1 200 OK
+   6  0.004872       192.168.1.10          192.168.1.20          TCP      66     80 → 443 [FIN, ACK] Seq=1 Ack=396 Win=65535 Len=0
+   7  0.005034       192.168.1.20          192.168.1.10          TCP      66     443 → 80 [FIN, ACK] Seq=396 Ack=67 Win=65535 Len=0
+
+Explanation:
+No.: Packet number in the capture.
+Time: The time relative to the start of the capture.
+Source: The source IP address initiating the communication (e.g., 192.168.1.10).
+Destination: The destination IP address receiving the communication (e.g., 192.168.1.20).
+Protocol: The protocol used for the communication, such as TCP or HTTP.
+Length: The size of the packet in bytes.
+Info: The packet-specific information, such as the type of message (e.g., SYN, GET request, etc.).
+Breakdown of Key Packets:
+SYN Packet (Packet 1): The client (192.168.1.10) sends a TCP SYN packet to initiate a connection to port 443 (HTTPS) on the server (192.168.1.20).
+SYN-ACK (Packet 2): The server responds with a SYN-ACK packet, confirming the connection request.
+ACK (Packet 3): The client acknowledges the server’s SYN-ACK, completing the handshake.
+HTTP GET Request (Packet 4): The client sends an HTTP GET request to fetch the page /index.html from the server.
+HTTP 200 OK Response (Packet 5): The server responds with a 200 OK message, indicating that the GET request was successfully processed and the page is sent.
+FIN-ACK (Packets 6 and 7): Both the client and the server send TCP FIN packets to close the connection.
