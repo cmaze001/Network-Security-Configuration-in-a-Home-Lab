@@ -1,0 +1,31 @@
+$ nmap -v -sS 192.168.1.10
+
+Starting Nmap 7.80 ( https://nmap.org ) at 2024-11-23 12:34 PST
+Initiating SYN Stealth Scan at 12:34
+Scanning 192.168.1.10 [1000 ports]
+Discovered open port 22/tcp on 192.168.1.10
+Discovered open port 80/tcp on 192.168.1.10
+Discovered open port 443/tcp on 192.168.1.10
+
+Nmap scan report for 192.168.1.10
+Host is up (0.00014s latency).
+Not shown: 997 closed ports
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+Nmap done: 1 IP address (1 host up) scanned in 2.31 seconds
+
+Explanation:
+Command: nmap -v -sS 192.168.1.10
+-v: Enables verbose output.
+-sS: Initiates a TCP SYN scan, which is commonly used for stealth scanning.
+Ports Scanned: The scan checks the first 1000 most common ports.
+Results:
+The target IP 192.168.1.10 has three open ports:
+Port 22 (SSH)
+Port 80 (HTTP)
+Port 443 (HTTPS)
+Other ports are closed and are not listed.
+Timing: The scan was completed in 2.31 seconds, with minimal latency.
