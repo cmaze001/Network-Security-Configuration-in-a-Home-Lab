@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<configuration>
+  <system>
+    <hostname>pfsense</hostname>
+    <domain>homelab.local</domain>
+    <dnsserver>
+      <server>8.8.8.8</server>
+      <server>8.8.4.4</server>
+    </dnsserver>
+    <gateway>
+      <name>WAN_DHCP</name>
+      <interface>wan</interface>
+      <gateway>192.168.0.1</gateway>
+    </gateway>
+  </system>
+
+  <interfaces>
+    <wan>
+      <if>em0</if>
+      <ipaddr>dhcp</ipaddr>
+      <descr>WAN Interface</descr>
+    </wan>
+    <lan>
+      <if>em1</if>
+      <ipaddr>192.168.1.1</ipaddr>
+      <subnet>24</subnet>
+      <descr>LAN Interface</descr>
+    </lan>
+  </interfaces>
+
+  <firewall>
+    <rules>
+      <rule>
+        <interface>lan</interface>
+        <source>any</source>
+        <destination>any</destination>
+        <protocol>TCP</protocol>
+        <port>80</port>
+        <action>pass</action>
+        <descr>Allow HTTP traffic</descr>
+      </rule>
+      <rule>
+        <interface>wan</interface>
+        <source>any</source>
+        <destination>192.168.1.1</destination>
+        <protocol>ICMP</protocol>
+        <action>block</action>
+        <descr>Block ping requests</descr>
+      </rule>
+    </rules>
+  </firewall>
+
+  <nat>
+    <outbound>
+      <mode>manual</mode>
+      <rules>
+        <rule>
+          <interface>wan</interface>
+          <source>192.168.1.0/24</source>
+          <natport>any</natport>
+          <target>any</target>
+          <descr>Outbound NAT for LAN</descr>
+        </rule>
+      </rules>
+    </outbound>
+  </nat>
+
+  <dhcpd>
+    <lan>
+      <range>
+        <start>192.168.1.100</start>
+        <end>192.168.1.200</end>
+      </range>
+      <gateway>192.168.1.1</gateway>
+      <dnsserver>8.8.8.8</dnsserver>
+      <dnsserver>8.8.4.4</dnsserver>
+    </lan>
+  </dhcpd>
+</configuration>
+
+Key Sections Explained:
+System Configuration:
+Hostname: Sets the device name.
+DNS servers: Configured for upstream DNS resolution.
+Gateway: Specifies the WAN gateway for routing.
+Interface Configuration:
+WAN (em0): Configured to obtain IP via DHCP.
+LAN (em1): Assigned a static IP (192.168.1.1) with a subnet mask of /24.
+Firewall Rules:
+LAN Rule: Allows HTTP (TCP port 80) traffic from any source to any destination.
+WAN Rule: Blocks ICMP (ping) requests to the pfSense interface for security.
+NAT Configuration:
+Outbound NAT: Configured to allow devices on the LAN (192.168.1.0/24) to communicate with external networks via the WAN interface.
+DHCP Server:
+Enabled on the LAN interface.
+Lease range: 192.168.1.100 to 192.168.1.200.
+Gateway and DNS servers provided for connected devices.
