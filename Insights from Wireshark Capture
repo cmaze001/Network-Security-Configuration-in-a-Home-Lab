@@ -1,0 +1,60 @@
+## Insights from Wireshark Capture
+
+### 1. **Packet Capture Overview**
+The Wireshark capture contains network traffic from a small local network, including normal traffic and potential indicators of malicious behavior. The objective was to analyze various protocols, detect anomalies, and examine potential security risks.
+
+**Capture Details:**
+- **Capture Duration:** 1 hour
+- **Protocols Involved:** HTTP, DNS, ICMP, TCP, UDP
+- **Traffic Volume:** 500 MB
+
+### 2. **High-Level Insights**
+- **Unusual DNS Requests:** A significant number of DNS queries were made to an external domain (`malicious-example.com`), which did not match any internal configurations. This behavior can indicate DNS tunneling or exfiltration attempts.
+- **Potential DoS Attack:** An unusually high volume of ICMP Echo Requests (ping) was observed from a single host, potentially indicating a Distributed Denial of Service (DDoS) attack.
+- **Suspicious HTTP Traffic:** Multiple HTTP requests with an unusual User-Agent string and accessing paths related to `"/wp-admin"` were detected, potentially indicating automated scanning for vulnerabilities.
+
+### 3. **Detailed Packet Analysis**
+
+#### A. **Suspicious DNS Requests**
+- **Timestamp:** 12:02:15
+- **Source IP:** 192.168.1.45
+- **Destination IP:** 8.8.8.8 (Google DNS)
+- **Query:** `malicious-example.com`
+- **Analysis:**
+  - This DNS request was made to an external DNS server, suggesting an attempt to resolve a potentially malicious domain. It is uncommon for internal devices to make requests for external domains outside the expected whitelist.
+  - **Action:** Investigate the device (192.168.1.45) for signs of malware or unauthorized tunneling tools.
+
+#### B. **Possible DDoS Attack (ICMP Flood)**
+- **Timestamp Range:** 12:10:00 - 12:15:30
+- **Source IP:** 10.0.0.5
+- **Destination IP:** 192.168.1.10
+- **Protocol:** ICMP
+- **Type:** Echo Request (ping)
+- **Count:** 200+ requests in 5 minutes
+- **Analysis:**
+  - A flood of ICMP Echo Requests was observed from IP 10.0.0.5, targeting a single internal machine (192.168.1.10).
+  - **Action:** Configure rate-limiting for ICMP traffic or block suspicious IPs through the firewall.
+
+#### C. **Suspicious HTTP Traffic (Possible Brute Force)**
+- **Timestamp:** 12:20:45
+- **Source IP:** 192.168.1.50
+- **Destination IP:** 192.168.1.100
+- **Protocol:** HTTP
+- **Request Path:** `/wp-admin`
+- **User-Agent:** `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36`
+- **Analysis:**
+  - Repeated HTTP requests to a WordPress admin page (often targeted by automated bots attempting brute-force attacks).
+  - The User-Agent string is generic, matching many automated scanners.
+  - **Action:** Implement rate-limiting or CAPTCHA on login pages and ensure that WordPress is updated and secured.
+
+### 4. **Conclusion and Recommendations**
+- **DNS Traffic:** There was an unusual spike in external DNS queries to a suspicious domain, warranting further investigation into possible malware infection or exfiltration.
+- **ICMP Flooding:** A potential DoS attack was detected, suggesting that defensive measures (e.g., firewalls or DDoS mitigation tools) should be deployed.
+- **HTTP Brute Force Attempts:** Automated tools might be probing the internal network for vulnerabilities. Harden the web server, use strong authentication mechanisms, and monitor login attempts.
+
+### 5. **Next Steps**
+- Implement alerts for suspicious DNS requests.
+- Review firewall rules and increase protections against DDoS traffic.
+- Strengthen HTTP security measures for web applications, particularly those facing the internet.
+
+
