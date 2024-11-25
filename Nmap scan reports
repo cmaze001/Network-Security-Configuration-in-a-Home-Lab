@@ -1,31 +1,145 @@
-$ nmap -v -sS 192.168.1.10
 
-Starting Nmap 7.80 ( https://nmap.org ) at 2024-11-23 12:34 PST
-Initiating SYN Stealth Scan at 12:34
-Scanning 192.168.1.10 [1000 ports]
-Discovered open port 22/tcp on 192.168.1.10
-Discovered open port 80/tcp on 192.168.1.10
-Discovered open port 443/tcp on 192.168.1.10
+### Example 1: **Basic Nmap Scan**
 
-Nmap scan report for 192.168.1.10
-Host is up (0.00014s latency).
-Not shown: 997 closed ports
-PORT    STATE SERVICE
-22/tcp  open  ssh
-80/tcp  open  http
-443/tcp open  https
+This scan checks which ports are open on a target system.
 
-Nmap done: 1 IP address (1 host up) scanned in 2.31 seconds
+```bash
+$ nmap 192.168.1.1
 
-Explanation:
-Command: nmap -v -sS 192.168.1.10
--v: Enables verbose output.
--sS: Initiates a TCP SYN scan, which is commonly used for stealth scanning.
-Ports Scanned: The scan checks the first 1000 most common ports.
-Results:
-The target IP 192.168.1.10 has three open ports:
-Port 22 (SSH)
-Port 80 (HTTP)
-Port 443 (HTTPS)
-Other ports are closed and are not listed.
-Timing: The scan was completed in 2.31 seconds, with minimal latency.
+Starting Nmap 7.93 ( https://nmap.org ) at 2024-11-25 12:45 UTC
+Nmap scan report for 192.168.1.1
+Host is up (0.0010s latency).
+Not shown: 999 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+443/tcp  open  https
+8080/tcp open  http-proxy
+MAC Address: 00:14:22:01:23:45 (Cisco Systems)
+
+Nmap done: 1 IP address (1 host up) scanned in 5.09 seconds
+```
+
+**Explanation:**
+- This is a simple Nmap scan targeting the IP `192.168.1.1`.
+- Nmap identifies that the host is up and reports open ports such as SSH (22/tcp), HTTP (80/tcp), HTTPS (443/tcp), and HTTP Proxy (8080/tcp).
+- The MAC address of the target device is also reported.
+
+---
+
+### Example 2: **Service Version Detection**
+
+This scan tries to detect the version of the services running on open ports.
+
+```bash
+$ nmap -sV 192.168.1.1
+
+Starting Nmap 7.93 ( https://nmap.org ) at 2024-11-25 12:50 UTC
+Nmap scan report for 192.168.1.1
+Host is up (0.0010s latency).
+Not shown: 999 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+80/tcp   open  http    Apache httpd 2.4.38 ((Debian))
+443/tcp  open  https   Apache httpd 2.4.38 ((Debian))
+8080/tcp open  http-proxy Apache httpd 2.4.38 ((Debian))
+MAC Address: 00:14:22:01:23:45 (Cisco Systems)
+
+Nmap done: 1 IP address (1 host up) scanned in 6.12 seconds
+```
+
+**Explanation:**
+- The `-sV` flag enables version detection. The output lists the versions of services running on open ports.
+- In this example, Apache HTTPD version 2.4.38 and OpenSSH 7.9p1 are identified.
+- Knowing the service versions can help identify vulnerabilities if they are outdated.
+
+---
+
+### Example 3: **OS Detection**
+
+This scan attempts to detect the operating system (OS) of the target.
+
+```bash
+$ nmap -O 192.168.1.1
+
+Starting Nmap 7.93 ( https://nmap.org ) at 2024-11-25 12:55 UTC
+Nmap scan report for 192.168.1.1
+Host is up (0.0010s latency).
+Not shown: 999 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+443/tcp  open  https
+8080/tcp open  http-proxy
+MAC Address: 00:14:22:01:23:45 (Cisco Systems)
+
+OS fingerprint not available because the target is being evaded.
+
+Nmap done: 1 IP address (1 host up) scanned in 5.11 seconds
+```
+
+**Explanation:**
+- The `-O` flag enables OS detection. 
+- However, the OS fingerprinting failed due to the target using evasion techniques (e.g., firewall rules or packet filtering).
+- Nmap could not determine the operating system, but it still provides information about open ports.
+
+---
+
+### Example 4: **Aggressive Scan**
+
+An aggressive scan performs multiple tests, including version detection, OS detection, and script scanning.
+
+```bash
+$ nmap -A 192.168.1.1
+
+Starting Nmap 7.93 ( https://nmap.org ) at 2024-11-25 13:00 UTC
+Nmap scan report for 192.168.1.1
+Host is up (0.0010s latency).
+Not shown: 999 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+80/tcp   open  http    Apache httpd 2.4.38 ((Debian))
+443/tcp  open  https   Apache httpd 2.4.38 ((Debian))
+8080/tcp open  http-proxy Apache httpd 2.4.38 ((Debian))
+
+Host script results:
+|_http-title: Site doesn't have a title (text/html).
+|_http-server-header: Apache/2.4.38 (Debian)
+
+MAC Address: 00:14:22:01:23:45 (Cisco Systems)
+
+OS details: Linux 3.2 - 4.9
+
+Nmap done: 1 IP address (1 host up) scanned in 10.87 seconds
+```
+
+**Explanation:**
+- The `-A` flag enables aggressive scanning, which includes version detection, OS detection, and script scanning.
+- The output shows the versions of services, the operating system (`Linux 3.2 - 4.9`), and additional information from Nmap scripts, such as the HTTP server details and title.
+
+---
+
+### Example 5: **TCP SYN Scan (Stealth Scan)**
+
+A SYN scan is a stealthy method to identify open ports without establishing a full TCP connection.
+
+```bash
+$ nmap -sS 192.168.1.1
+
+Starting Nmap 7.93 ( https://nmap.org ) at 2024-11-25 13:05 UTC
+Nmap scan report for 192.168.1.1
+Host is up (0.0010s latency).
+Not shown: 999 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+443/tcp  open  https
+8080/tcp open  http-proxy
+MAC Address: 00:14:22:01:23:45 (Cisco Systems)
+
+Nmap done: 1 IP address (1 host up) scanned in 4.52 seconds
+```
+
+**Explanation:**
+- The `-sS` flag performs a TCP SYN scan, which is stealthier than a full TCP connect scan. 
+- The scan reports the same open ports as before but uses fewer system resources and leaves less trace on the target system compared to a regular scan.
